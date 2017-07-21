@@ -6,6 +6,8 @@ mod sound_source;
 mod source_formats;
 mod vector;
 
+use sound_source::SoundSource;
+
 const TABLE_SIZE: usize = 200;
 
 fn main() {
@@ -27,9 +29,18 @@ fn run() -> Result<(), pa::Error> {
         println!("{:#?}", &info);
     }
 
+    // ORIGINAL
+    let mut sine = [0.0; TABLE_SIZE];
+    for i in 0..TABLE_SIZE {
+        sine[i] = (i as f64 / TABLE_SIZE as f64 * PI * 2.0).sin() as f32;
+    }
+    let mut left_phase = 0;
+    let mut right_phase = 0;
+    // \ORIGINAL
+
     // Sine playback
     let sine_args = source_formats::SineInitArgs {frequency:1.0};
-    let sine_source = sound_source::SoundSource::new(sine_args);
+    let mut sine_source: source_formats::SineSource<f32> = sound_source::SoundSource::new(sine_args);
 
     const CHANNELS: i32 = 2;
     const FREQ: f64 = 44_100.0;
@@ -39,6 +50,7 @@ fn run() -> Result<(), pa::Error> {
 
     let callback = move |pa::OutputStreamCallbackArgs {buffer, frames, ..}| {
         sine_source.get_bytes(buffer, frames);
+
         pa::Continue
     };
 

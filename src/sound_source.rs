@@ -5,6 +5,6 @@ use vector;
 pub trait SoundSource<O> {
     type InitArgs;
     fn new(init_args: Self::InitArgs) -> Self;
-    fn get_bytes(&mut self, buffer: &mut [O], size: usize);
+    fn get_bytes(&mut self, buffer: &mut [O], frames: usize);
     fn get_position(&self) -> vector::Vector3;
 }
